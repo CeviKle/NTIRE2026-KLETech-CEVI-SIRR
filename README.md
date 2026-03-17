@@ -193,6 +193,23 @@ CUDA_VISIBLE_DEVICES=1 python xreflection/tools/train.py \
 ```
 
 ---
+## 11 Test Inference Using Pretrained Weights
+
+If pretrained checkpoint weights are available, they can also be used directly for inference without resuming training.
+
+Example:
+
+CUDA_VISIBLE_DEVICES=1 python xreflection/tools/train.py \
+  --config options/test_100.yml \
+  --test_only /path/to/pretrained_checkpoint.ckpt
+
+This is useful when:
+
+evaluating a released pretrained model
+
+reproducing baseline inference
+
+comparing official or previously trained checkpoints without additional training
 
 ## 11. Submission
 
