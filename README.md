@@ -103,7 +103,7 @@ PY
 
 ---
 
-## 7.3 Creating Checkpoint-Specific Config (Example: epoch 94)
+## 7.3 Creating Checkpoint-Specific Config (Example: epoch 109)
 
 Instead of writing a new config from scratch, we copy an existing one:
 
