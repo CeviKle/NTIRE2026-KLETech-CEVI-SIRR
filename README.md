@@ -188,30 +188,51 @@ Expected:
 
 ```
 CUDA_VISIBLE_DEVICES=1 python xreflection/tools/train.py \
-  --config options/test_100.yml \
+  --config options/test_109.yml \
   --test_only experiments/train_sirs_rdnet/checkpoints/last.ckpt
 ```
 
 ---
-## 11 Test Inference Using Pretrained Weights
+## 11. Test Inference Using Pretrained Weights
 
-If pretrained checkpoint weights are available, they can also be used directly for inference without resuming training.
+If a pretrained checkpoint is already available, it can be used directly for inference without resuming training. In our case, checkpoint-based evaluation and inference could also be performed using the available trained weights.
 
-Example:
-
+For example, using the epoch 109 checkpoint:
+```
 CUDA_VISIBLE_DEVICES=1 python xreflection/tools/train.py \
   --config options/test_100.yml \
-  --test_only /path/to/pretrained_checkpoint.ckpt
+  --test_only experiments/train_sirs_rdnet/checkpoints/epoch=109-step=XXXXX.ckpt
+```
+Similarly, validation can also be performed by passing the corresponding validation YAML together with the desired checkpoint:
+```
+CUDA_VISIBLE_DEVICES=1 python xreflection/tools/train.py \
+  --config options/val_ep109_only.yml \
+  --test_only experiments/train_sirs_rdnet/checkpoints/epoch=109-step=XXXXX.ckpt
+```
+This setup is useful for:
 
-This is useful when:
+evaluating an already trained checkpoint
 
-evaluating a released pretrained model
+comparing checkpoints without restarting training
 
-reproducing baseline inference
+running challenge inference directly from saved weights
 
-comparing official or previously trained checkpoints without additional training
+## 12. Note on Validation / Testing Setup
 
-## 11. Submission
+For validation, the provided data did not include a fully reliable clean transmission ground truth in the same way as a standard supervised benchmark. Therefore, a pseudo or approximate target setup was used for checkpoint comparison.
+
+Likewise, during testing and checkpoint-wise analysis, the available transmission-related reference used for comparison was not treated as a strict real ground truth. For this reason, the reported PSNR values should be interpreted mainly as a relative indicator for comparing checkpoints rather than as an absolute benchmark of final model quality.
+
+## 13. Output Format Conversion
+
+The generated images from the inference pipeline are saved in PNG format.
+For final challenge submission, these outputs are converted to JPG format using the provided script:
+
+python make_submission_jpg.py
+
+This script is used to prepare the final submission files in the required image format.
+
+## 14. Submission
 
 Prepare:
 
@@ -226,7 +247,7 @@ Ensure:
 
 ---
 
-## 12. Acknowledgement
+## 15. Acknowledgement
 
 This work is based on:
 https://github.com/hainuo-wang/XReflection
