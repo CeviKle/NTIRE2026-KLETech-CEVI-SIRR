@@ -108,7 +108,7 @@ PY
 Instead of writing a new config from scratch, we copy an existing one:
 
 ```
-cp options/val_ep17_only.yml options/val_ep94_only.yml
+cp options/val_ep17_only.yml options/val_ep109_only.yml
 ```
 
 Then update its name:
@@ -116,9 +116,9 @@ Then update its name:
 ```
 python - <<'PY'
 import yaml
-p = "options/val_ep94_only.yml"
+p = "options/val_ep109_only.yml"
 cfg = yaml.safe_load(open(p))
-cfg["name"] = "val_ep94_only"
+cfg["name"] = "val_ep109_only"
 yaml.safe_dump(cfg, open(p, "w"), sort_keys=False)
 print("OK name =", cfg["name"])
 PY
@@ -141,7 +141,7 @@ CUDA_VISIBLE_DEVICES=1 python xreflection/tools/train.py \
 ```
 CUDA_VISIBLE_DEVICES=1 python xreflection/tools/train.py \
   --config options/train_rdnet_val300.yml \
-  --test_only experiments/train_sirs_rdnet/checkpoints/epoch=94-step=XXXXX.ckpt
+  --test_only experiments/train_sirs_rdnet/checkpoints/epoch=109-step=XXXXX.ckpt
 ```
 
 ---
@@ -200,7 +200,7 @@ If a pretrained checkpoint is already available, it can be used directly for inf
 For example, using the epoch 109 checkpoint:
 ```
 CUDA_VISIBLE_DEVICES=1 python xreflection/tools/train.py \
-  --config options/test_100.yml \
+  --config options/test_109.yml \
   --test_only experiments/train_sirs_rdnet/checkpoints/epoch=109-step=XXXXX.ckpt
 ```
 Similarly, validation can also be performed by passing the corresponding validation YAML together with the desired checkpoint:
