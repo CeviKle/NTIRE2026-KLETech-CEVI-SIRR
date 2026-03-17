@@ -1,134 +1,217 @@
-# XReflection - An Easy-to-use Toolbox for Single-image Reflection Removal
+# NTIRE 2026: Reflection Removal in the Wild (SIRR)
 
+## 1. Introduction
 
-<div align="center"><img src="./docs/_static/XReflection_logo.png" alt="XReflection Logo" width="50%" height="50%"/></div>
+This repository contains our implementation for the **NTIRE 2026 Reflection Removal in the Wild Challenge**, conducted as part of the CVPR 2026 Workshop. The task focuses on recovering clean transmission images from real-world scenes affected by reflections.
 
-<!-- ---
-## <div align="center"><b><a href="README.md">English</a> | <a href="README_CN.md">简体中文</a></b></div>
--->
-
-<br>
-
-XReflection is a neat toolbox tailored for single-image reflection removal(SIRR). We offer state-of-the-art SIRR solutions for training and inference, with a high-performance data pipeline, multi-GPU/TPU support, and more!
-
-
----
-## 🏆 Award
-
-Equipped with XReflection, our team won the 1st place in the NTIRE 2025 Challenge on Single Image Reflection Removal in the Wild.
-
-<div align="center"><img src="docs/_static/NTIRE.png" alt="NTIRE 2025 Award" width="80%"/></div>
-
-<br>
-
----
-## 📰 News and Updates
-- **[2025-10-26]** XReflection is now production-ready and have been applied to multiple research projects inside our team. DSIT is available in the model zoo. More models are on the way!
-- **[2025-07-16]** DSRNet is available in the model zoo. More models are on the way!
-- **[2025-05-26]** Release a training/testing pipeline. 
-
----
-## 💡 Key Features
-
-+ All-in-one intergration for the state-of-the-art SIRR solutions. We aim to create an out-of-the-box experience for SIRR research.
-+ Multi-GPU/TPU support via PyTorchLightning. 
-+ Pretrained model zoo.
-+ Fast data synthesis pipeline.
----
-## 📝 Introduction
-
-Please visit the [documentation](https://xreflection.readthedocs.io/en/latest/) for more features and usage.
+Our implementation is built upon the XReflection framework and adapted for challenge-specific training, validation, and inference.
 
 ---
 
-## 🚀 Installation
+## 2. Method Overview
 
+We adopt a CNN-based dual network architecture for reflection removal. The model is trained to separate reflection and transmission components from a single input image.
 
-### Installation Commands
-```bash
-# Build from source
-git clone https://github.com/hainuo-wang/XReflection.git
-cd XReflection
+* Backbone: XReflection
+* Training: Supervised learning
+* Total training duration: **112 epochs**
+* Evaluation: PSNR-based checkpoint comparison
 
-# Install dependencies
+---
+
+## 3. Repository Structure
+
+```
+options/                Configuration files (train / val / test)
+xreflection/            Model + training pipeline
+experiments/            Outputs, logs, checkpoints
+make_submission_jpg.py  Submission script
+rotate_ensemble.py      Ensemble utility
+```
+
+---
+
+## 4. Installation
+
+```
+git clone https://github.com/CeviKle/NTIRE2026-KLETech-CEVI-SIRR.git
+cd NTIRE2026-KLETech-CEVI-SIRR
 pip install -r requirements.txt
-python setup.py develop
 ```
 
 ---
 
-## 📦 Getting Started
+## 5. GPU Usage
 
-### Testing a Pretrained Model
-```python
-python tools/train.py --config configs/train_config.yaml --test_only pretrained.ckpt
-```
+* **GPU 0 → Training**
+* **GPU 1 → Validation / Testing**
 
-### Training a Model
-```bash
-python tools/train.py --config configs/train_config.yaml
-```
-
-### Resume Training
-#### from the last checkpoint
-```python
-python tools/train.py --config configs/train_config.yaml --resume
-```
-#### from the a specific checkpoint
-```python
-python tools/train.py --config configs/train_config.yaml --resume your_checkpoint_path.ckpt
-```
-
-### Data Preparation
-#### Training dataset
-* 7,643 images from the
-  [Pascal VOC dataset](http://host.robots.ox.ac.uk/pascal/VOC/), center-cropped as 224 x 224 slices to synthesize training pairs;
-* 90 real-world training pairs provided by [Zhang *et al.*](https://github.com/ceciliavision/perceptual-reflection-removal);
-* 200 real-world training pairs provided by [IBCLN](https://github.com/JHL-HUST/IBCLN).
-
-#### Testing dataset
-* 45 real-world testing images from [CEILNet dataset](https://github.com/fqnchina/CEILNet);
-* 20 real testing pairs provided by [Zhang *et al.*](https://github.com/ceciliavision/perceptual-reflection-removal);
-* 20 real testing pairs provided by [IBCLN](https://github.com/JHL-HUST/IBCLN);
-* 454 real testing pairs from [SIR^2 dataset](https://sir2data.github.io/), containing three subsets (i.e., Objects (200), Postcard (199), Wild (55)). 
-
-Download all in one from https://checkpoints.mingjia.li/sirs.zip
+This ensures training and evaluation can run independently without interference.
 
 ---
 
-## 🌟 Features in Detail
+## 6. Training
 
-### Pretrained Model Zoo
-The performance of previous methods are improved with our new training pipeline.
-Access pretrained models for various SIRR algorithms. More are on the way.
+### 6.1 Start Training
 
-|Model| Link| PSNR(dB)|
-|---|---|---|
-|DSRNet|https://checkpoints.mingjia.li/dsr-25.8915.ckpt|25.8915|
-|DSIT|https://checkpoints.mingjia.li/dsit-26.6959.ckpt| 26.6959|
-|RDNet|https://checkpoints.mingjia.li/rdnet-26.4849.ckpt| 26.4849|
-<!-- ---
+```
+CUDA_VISIBLE_DEVICES=0 python xreflection/tools/train.py \
+  --config options/train_rdnet.yml
+```
 
-## 📄 Citation
+### 6.2 Resume Training
 
-If you find XReflection useful in your research or work, please consider citing:
-```bibtex
-@misc{xreflection2024,
-  title={XReflection: A Toolbox for Single-image Reflection Removal},
-  author={Your Name},
-  year={2024},
-  howpublished={\url{https://github.com/your-username/XReflection}}
-}
-``` -->
+```
+CUDA_VISIBLE_DEVICES=0 python xreflection/tools/train.py \
+  --config options/train_rdnet.yml \
+  --resume experiments/train_sirs_rdnet/checkpoints/last.ckpt
+```
 
 ---
-## 🙏 License and Acknowledgement
 
-This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE.md) file for details.
-The authors would express gratitude to the computational resource support from Google's TPU Research Cloud.
+## 7. Validation Setup
 
+### 7.1 Important Note
 
+We **do not modify the original training YAML**.
+Instead, we create separate validation configurations to avoid affecting training.
 
+---
 
+## 7.2 Creating Validation Config (val_300)
 
+```
+python - <<'PY'
+import yaml
 
+src = "options/train_rdnet.yml"
+dst = "options/train_rdnet_val300.yml"
+
+with open(src, "r") as f:
+    cfg = yaml.safe_load(f)
+
+cfg["datasets"]["val_datasets"][0]["datadir"] = "/NTIRE2026/C1_ReflRem/val_300"
+cfg["datasets"]["val_datasets"][0]["mode"] = "eval"
+cfg["test_only"] = True
+
+with open(dst, "w") as f:
+    yaml.safe_dump(cfg, f, sort_keys=False)
+
+print("Wrote:", dst)
+PY
+```
+
+---
+
+## 7.3 Creating Checkpoint-Specific Config (Example: epoch 94)
+
+Instead of writing a new config from scratch, we copy an existing one:
+
+```
+cp options/val_ep17_only.yml options/val_ep94_only.yml
+```
+
+Then update its name:
+
+```
+python - <<'PY'
+import yaml
+p = "options/val_ep94_only.yml"
+cfg = yaml.safe_load(open(p))
+cfg["name"] = "val_ep94_only"
+yaml.safe_dump(cfg, open(p, "w"), sort_keys=False)
+print("OK name =", cfg["name"])
+PY
+```
+
+---
+
+## 7.4 Run Validation (val_300)
+
+```
+CUDA_VISIBLE_DEVICES=1 python xreflection/tools/train.py \
+  --config options/train_rdnet_val300.yml \
+  --test_only experiments/train_sirs_rdnet/checkpoints/last.ckpt
+```
+
+---
+
+## 7.5 Evaluate Specific Checkpoint
+
+```
+CUDA_VISIBLE_DEVICES=1 python xreflection/tools/train.py \
+  --config options/train_rdnet_val300.yml \
+  --test_only experiments/train_sirs_rdnet/checkpoints/epoch=94-step=XXXXX.ckpt
+```
+
+---
+
+## 8. Validation Note
+
+* Validation dataset contains only **blended images**
+* We used **pseudo / approximate ground truth**
+* Therefore:
+
+  * PSNR values are **not absolute**
+  * Used only for **relative comparison**
+
+---
+
+## 9. Output Location
+
+Outputs are saved in:
+
+```
+experiments/train_sirs_rdnet/
+```
+
+Find outputs:
+
+```
+find experiments/train_sirs_rdnet -type f | grep -iE "\.png$|\.jpg$"
+```
+
+Count outputs:
+
+```
+find experiments/train_sirs_rdnet -type f | grep -iE "\.png$|\.jpg$" | wc -l
+```
+
+Expected:
+
+* Validation → 300 images
+* Test → 100 images
+
+---
+
+## 10. Test Inference
+
+```
+CUDA_VISIBLE_DEVICES=1 python xreflection/tools/train.py \
+  --config options/test_100.yml \
+  --test_only experiments/train_sirs_rdnet/checkpoints/last.ckpt
+```
+
+---
+
+## 11. Submission
+
+Prepare:
+
+* val_300_output.zip → 300 images
+* test_100_output.zip → 100 images
+
+Ensure:
+
+* Correct naming
+* No extra folders
+* No missing images
+
+---
+
+## 12. Acknowledgement
+
+This work is based on:
+https://github.com/hainuo-wang/XReflection
+
+---
