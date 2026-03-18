@@ -1,4 +1,4 @@
-broo ek pura copy apste de dena tah content readme .md kaa taaki kuch b overwrite naa ho 
+
 # NTIRE 2026: Reflection Removal in the Wild (SIRR)
 
 ## 1. Introduction
@@ -255,8 +255,6 @@ This ensures:
 
 ---
 
-### 12.5 Testing Conversion
-
 
 ## 13. Output Format Conversion
 
@@ -264,11 +262,12 @@ The generated images from the inference pipeline are saved in PNG format.
 For final challenge submission, these outputs are converted to JPG format using the provided script:
 
 ---
+
 python make_submission_jpg.py
 
 ---
 
-### 13. Testing Conversion
+### 13.1 Testing Conversion
 
 ---
 
